@@ -1,12 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader } from '../Loader';
+import classNames from 'classnames';
+import { Todo } from '../../types/Todo';
+import { getUser } from '../../api';
 
-export const TodoModal: React.FC = () => {
+type Props = {
+  setSelectedId: (arg: number) => void;
+  todoId: number;
+  selectedToDo: Todo;
+  setActiveModal: (arg: boolean) => void;
+  activeModal: boolean;
+};
+
+export const TodoModal: React.FC<Props> = ({
+  setSelectedId,
+  selectedToDo,
+  todoId,
+  setActiveModal,
+  activeModal,
+}) => {
+  const [closed, setClosed] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (activeModal) {
+      setIsLoading(true);
+
+      setTimeout(() => {
+        getUser(selectedToDo.userId)
+          .then(user => setUserName(user.name))
+          .catch(() => setUserName('Unknown user'))
+          .finally(() => setIsLoading(false));
+      }, 300);
+    }
+  }, [activeModal, selectedToDo.userId]);
+
   return (
-    <div className="modal is-active" data-cy="modal">
+    <div
+      className={classNames('modal', {
+        'is-active': !closed && todoId !== 0,
+      })}
+      data-cy="modal"
+    >
       <div className="modal-background" />
-
-      {true ? (
+      {/* selectedToDo ? 
+        <Loader/>
+        : */}
+      {isLoading ? (
         <Loader />
       ) : (
         <div className="modal-card">
@@ -15,25 +56,41 @@ export const TodoModal: React.FC = () => {
               className="modal-card-title has-text-weight-medium"
               data-cy="modal-header"
             >
-              Todo #2
+              Todo #{selectedToDo.id}
             </div>
 
             {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-            <button type="button" className="delete" data-cy="modal-close" />
+            <button
+              type="button"
+              className="delete"
+              data-cy="modal-close"
+              onClick={() => {
+                setSelectedId(0);
+                setClosed(true);
+                setActiveModal(false);
+              }}
+            />
           </header>
 
           <div className="modal-card-body">
             <p className="block" data-cy="modal-title">
-              quis ut nam facilis et officia qui
+              {selectedToDo.title}
             </p>
 
             <p className="block" data-cy="modal-user">
               {/* <strong className="has-text-success">Done</strong> */}
-              <strong className="has-text-danger">Planned</strong>
+              <strong
+                className={classNames({
+                  'has-text-danger': !selectedToDo.completed,
+                  'has-text-success': selectedToDo.completed,
+                })}
+              >
+                {selectedToDo.completed ? 'Done' : 'Planned'}
+              </strong>
 
               {' by '}
 
-              <a href="mailto:Sincere@april.biz">Leanne Graham</a>
+              <a href="mailto:Sincere@april.biz">{`${userName}`}</a>
             </p>
           </div>
         </div>
