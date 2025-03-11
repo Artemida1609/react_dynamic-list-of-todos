@@ -12,9 +12,13 @@ export const TodoFilter: React.FC<Props> = ({ setFilteredTodos }) => {
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
-    getTodos().then(todoEl => {
-      setTodos(todoEl);
-    });
+    getTodos()
+      .then(todoEl => {
+        setTodos(todoEl);
+      })
+      .catch(error => {
+        throw new Error(`Error: ${error}`);
+      });
   }, []);
 
   useEffect(() => {
@@ -79,7 +83,9 @@ export const TodoFilter: React.FC<Props> = ({ setFilteredTodos }) => {
               className="delete"
               onClick={() => {
                 setInputValue('');
-                setFilteredTodos(todos);
+                if (todos) {
+                  setFilteredTodos(todos);
+                }
               }}
             />
           </span>

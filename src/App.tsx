@@ -8,9 +8,6 @@ import { TodoFilter } from './components/TodoFilter';
 import { TodoModal } from './components/TodoModal';
 import { Todo } from './types/Todo';
 import { Loader } from './components/Loader';
-// import { Loader } from './components/Loader';
-// import { getTodos } from './api';
-// import { Todo } from './types/Todo';
 
 export const App: React.FC = () => {
   const [selectedId, setSelectedId] = useState(0);
@@ -18,9 +15,6 @@ export const App: React.FC = () => {
   const [selectedToDo, setSelectedToDo] = useState<Todo>();
   const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
   const [loader, setLoader] = useState(true);
-  // const [todos, setTodos] = useState<Todo[]>([]);
-
-  // getTodos().then(setTodos);
 
   useEffect(() => {
     setLoader(true);

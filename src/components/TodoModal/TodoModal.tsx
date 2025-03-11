@@ -21,6 +21,7 @@ export const TodoModal: React.FC<Props> = ({
 }) => {
   const [closed, setClosed] = useState(false);
   const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -29,8 +30,11 @@ export const TodoModal: React.FC<Props> = ({
 
       setTimeout(() => {
         getUser(selectedToDo.userId)
-          .then(user => setUserName(user.name))
-          .catch(() => setUserName('Unknown user'))
+          .then(user => {
+            setUserName(user.name);
+            setUserEmail(user.email);
+          })
+          .catch(error => setUserName(`User not found: ${error}`))
           .finally(() => setIsLoading(false));
       }, 300);
     }
@@ -90,7 +94,7 @@ export const TodoModal: React.FC<Props> = ({
 
               {' by '}
 
-              <a href="mailto:Sincere@april.biz">{`${userName}`}</a>
+              <a href={`mailto:${userEmail}`}>{`${userName}`}</a>
             </p>
           </div>
         </div>
